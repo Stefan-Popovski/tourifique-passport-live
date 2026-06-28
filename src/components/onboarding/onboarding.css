@@ -1,0 +1,914 @@
+/* =========================================================
+   Tourifique Passport — Onboarding Module Styles (v2)
+   ---------------------------------------------------------
+   Clean, gamified, mobile-first onboarding UI.
+   - White cards on a soft gray background
+   - Purple + yellow accents (from the parrot mascot)
+   - All selectors are scoped under `.onboarding-root`
+   - No global element selectors, no body styles touched
+   - All class names start with `onboarding-` to avoid clashes
+   ========================================================= */
+
+/* =========================================================
+   ▼▼▼  CUSTOMIZE COLORS / THEME HERE  ▼▼▼
+   Edit these CSS variables to rebrand the whole module.
+   ========================================================= */
+.onboarding-root {
+  --ob-purple: #8B5CF6;
+  --ob-purple-deep: #2E1065;
+  --ob-purple-soft: rgba(139, 92, 246, 0.16);
+  --ob-yellow: #FACC15;
+  --ob-yellow-soft: rgba(250, 204, 21, 0.14);
+
+  --ob-bg: #0D071C;
+  --ob-card: rgba(255, 255, 255, 0.12);
+  --ob-text: #FFFFFF;
+  --ob-text-dim: rgba(255, 255, 255, 0.68);
+  --ob-text-muted: rgba(255, 255, 255, 0.48);
+  --ob-border: rgba(255, 255, 255, 0.18);
+
+  --ob-shadow-sm: 0 14px 34px -28px rgba(0, 0, 0, 0.72);
+  --ob-shadow-md: 0 34px 90px -42px rgba(0, 0, 0, 0.88);
+
+  --ob-radius-lg: 24px;
+  --ob-radius-md: 16px;
+  --ob-radius-sm: 12px;
+}
+/* =========================================================
+   ▲▲▲  END THEME VARIABLES  ▲▲▲
+   ========================================================= */
+
+/* ---------- Module root --------------------------------- */
+/* Fluid padding + safe-area insets so the card breathes on
+   every phone — from 320px iPhone SE to 430px Pro Max, plus
+   notched devices and foldables. */
+.onboarding-root {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top:    max(clamp(12px, 4vw, 28px), env(safe-area-inset-top));
+  padding-bottom: max(clamp(12px, 4vw, 28px), env(safe-area-inset-bottom));
+  padding-left:   max(clamp(12px, 4vw, 20px), env(safe-area-inset-left));
+  padding-right:  max(clamp(12px, 4vw, 20px), env(safe-area-inset-right));
+  overflow-x: hidden;
+  background-color: var(--ob-bg);
+  background-image:
+    linear-gradient(95deg, rgba(13, 7, 28, 0.98) 0%, rgba(46, 16, 101, 0.8) 48%, rgba(13, 7, 28, 0.96) 100%),
+    linear-gradient(180deg, rgba(250, 204, 21, 0.08) 0%, transparent 34%, rgba(13, 7, 28, 0.38) 100%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.055) 1px, transparent 1px);
+  background-size: auto, auto, 24px 24px;
+  color: var(--ob-text);
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+.onboarding-root *,
+.onboarding-root *::before,
+.onboarding-root *::after {
+  box-sizing: border-box;
+}
+
+/* Fullscreen mode uses dynamic viewport height units so iOS
+   Safari's collapsing URL bar can't clip the card. `safe
+   center` keeps the card vertically centred on tall phones
+   but falls back to top-aligned when content is too tall. */
+.onboarding-root--fullscreen {
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  align-items: safe center;
+}
+
+/* ---------- Main card ----------------------------------- */
+.onboarding-card {
+  width: 100%;
+  max-width: 640px;
+  background: var(--ob-card);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: clamp(18px, 5vw, 24px);
+  box-shadow: var(--ob-shadow-md);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  padding: clamp(14px, 4.2vw, 20px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 2.6vw, 14px);
+  animation: onboarding-card-in 0.4s ease both;
+}
+
+@keyframes onboarding-card-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Top bar (back + progress) ------------------- */
+/* The step label is a separate sibling underneath so it
+   doesn't squeeze the progress bar. */
+.onboarding-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0;
+}
+
+.onboarding-back {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: var(--ob-purple-soft);
+  color: #fff;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.18s ease, transform 0.15s ease, color 0.18s ease;
+  font-family: inherit;
+}
+.onboarding-back:hover:not(:disabled) {
+  background: rgba(139, 92, 246, 0.24);
+  color: #fff;
+}
+.onboarding-back:active:not(:disabled) {
+  transform: scale(0.94);
+}
+.onboarding-back:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.onboarding-progress-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.onboarding-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ob-purple), var(--ob-yellow));
+  border-radius: 999px;
+  transition: width 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.onboarding-step-label {
+  margin: 2px 0 8px;
+  text-align: right;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ob-text-muted);
+  line-height: 1.1;
+}
+
+/* ---------- Intro screen -------------------------------- */
+.onboarding-intro {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 2px 0 0;
+  animation: onboarding-fade-in 0.4s ease both;
+}
+.onboarding-intro h1 {
+  font-size: clamp(22px, 6.2vw, 28px);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0;
+  color: var(--ob-text);
+}
+.onboarding-intro p {
+  font-size: clamp(13px, 3.6vw, 15px);
+  color: var(--ob-text-dim);
+  line-height: 1.5;
+  margin: 0 0 4px;
+}
+
+/* ---------- NPC row (parrot + question bubble) ----------
+   Compact horizontal row: small parrot GIF on the left,
+   white speech bubble on the right. Plain bare <img> — no
+   wrapper frame, no transform tricks — so the layout space
+   matches the visible parrot pixel-for-pixel and the card
+   never goes 900px tall with a giant blank middle. */
+.onboarding-npc-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 14px;
+  margin: 0 0 14px;
+  width: 100%;
+  animation: onboarding-fade-in 0.35s ease both;
+}
+
+/* The bird only occupies a small part of its GIF canvas, so a
+   plain width/height makes it look tiny. Instead the WRAPPER
+   owns a fixed layout box (so the row stays compact) and the
+   GIF inside is scaled up — the transparent canvas overflows
+   invisibly while the actual bird fills the wrapper. */
+.onboarding-npc-wrap {
+  width: 170px;
+  height: 170px;
+  flex: 0 0 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  position: relative;
+  border: none;
+}
+
+.onboarding-npc-gif {
+  width: 170px;
+  height: 170px;
+  object-fit: contain;
+  display: block;
+  transform: scale(2.5);
+  transform-origin: center center;
+  image-rendering: auto;
+  background: transparent;
+  border: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Rare opt-in <video> path (no canvas padding → no scaling). */
+.onboarding-npc-video {
+  width: 115px;
+  height: 115px;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+  background: transparent;
+  pointer-events: none;
+  user-select: none;
+}
+
+.onboarding-question-bubble {
+  flex: 1;
+  min-width: 0;
+  max-width: none;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  position: relative;
+  animation: onboarding-bubble-pop 0.35s ease both;
+}
+
+.onboarding-question-bubble h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 21px;
+  line-height: 1.2;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+/* No tail — the question is plain floating text beside the
+   parrot, no bubble box around it. */
+.onboarding-question-bubble::before {
+  content: none;
+}
+
+@media (max-width: 560px) {
+  .onboarding-npc-row {
+    gap: 10px;
+    margin: 0 0 12px;
+  }
+  .onboarding-npc-wrap {
+    width: 128px;
+    height: 128px;
+    flex: 0 0 128px;
+  }
+  .onboarding-npc-gif {
+    width: 128px;
+    height: 128px;
+    transform: scale(2.4);
+  }
+  .onboarding-npc-video {
+    width: 82px;
+    height: 82px;
+  }
+  .onboarding-question-bubble {
+    min-height: 0;
+    padding: 0;
+    border-radius: 0;
+  }
+  .onboarding-question-bubble h2 {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+}
+
+/* ---------- Question screen ----------------------------- */
+.onboarding-question {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: onboarding-fade-in 0.35s ease both;
+}
+
+@keyframes onboarding-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.onboarding-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.onboarding-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2.8vw, 12px);
+  width: 100%;
+  min-height: 50px; /* still a comfortable touch target, more compact */
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid var(--ob-border);
+  border-radius: var(--ob-radius-md);
+  padding: clamp(8px, 2.4vw, 10px) clamp(11px, 3vw, 13px);
+  text-align: left;
+  font-size: clamp(14px, 3.8vw, 15px);
+  font-weight: 600;
+  color: var(--ob-text);
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: var(--ob-shadow-sm);
+  transition: transform 0.15s ease, border-color 0.18s ease,
+              background 0.18s ease, box-shadow 0.18s ease;
+}
+.onboarding-option:hover {
+  transform: translateY(-1px);
+  border-color: rgba(250, 204, 21, 0.58);
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 14px 30px -24px rgba(0, 0, 0, 0.8);
+}
+.onboarding-option:active {
+  transform: translateY(0) scale(0.99);
+}
+.onboarding-option--selected {
+  border-color: var(--ob-yellow);
+  background: var(--ob-yellow-soft);
+  box-shadow: 0 18px 34px -26px rgba(250, 204, 21, 0.9);
+}
+
+.onboarding-option-icon {
+  width: clamp(34px, 10vw, 40px);
+  height: clamp(34px, 10vw, 40px);
+  flex-shrink: 0;
+  border-radius: 10px;
+  background: rgba(139, 92, 246, 0.2);
+  color: #C4B5FD;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  line-height: 1;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.onboarding-option--selected .onboarding-option-icon {
+  background: var(--ob-yellow);
+  color: var(--ob-purple-deep);
+}
+
+/* SVG icon inside the icon tile */
+.onboarding-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+}
+/* "Cut-outs" inside icons — painted the same colour as the
+   icon tile so they look like punched-out holes in any state. */
+.onboarding-icon .ob-icon-cut {
+  fill: rgba(139, 92, 246, 0.2);
+}
+.onboarding-option--selected .onboarding-icon .ob-icon-cut {
+  fill: var(--ob-yellow);
+}
+
+.onboarding-option-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.onboarding-option-title {
+  font-size: clamp(14px, 3.8vw, 15px);
+  font-weight: 700;
+  color: var(--ob-text);
+  line-height: 1.2;
+}
+.onboarding-option-desc {
+  font-size: clamp(11.5px, 3.1vw, 12.5px);
+  font-weight: 500;
+  color: var(--ob-text-dim);
+  line-height: 1.35;
+}
+
+.onboarding-option-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--ob-purple);
+  color: #fff;
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+  box-shadow: 0 2px 6px rgba(91, 10, 122, 0.25);
+}
+.onboarding-option--selected .onboarding-option-badge {
+  background: var(--ob-yellow);
+  color: var(--ob-purple-deep);
+  box-shadow: 0 2px 6px rgba(255, 242, 58, 0.55);
+}
+
+/* ---------- Decorative world map ----------------------- */
+/* Default (bold) map — used on the intro / welcome card.
+   Dotted continent silhouettes via SVG clipPath + pattern. */
+.onboarding-map {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--ob-radius-md);
+  padding: clamp(8px, 2.6vw, 14px) clamp(12px, 3.6vw, 18px);
+  background: rgba(13, 7, 28, 0.3);
+  border: 1px solid var(--ob-border);
+}
+.onboarding-map-svg {
+  width: 100%;
+  height: clamp(95px, min(26vw, 18vh), 150px);
+  display: block;
+}
+.onboarding-map-dot {
+  fill: rgba(255, 255, 255, 0.52);
+  opacity: 0.64;
+}
+.onboarding-map-decoration-dot {
+  fill: var(--ob-yellow);
+  opacity: 0.8;
+}
+.onboarding-map-pin .onboarding-map-pin-halo {
+  fill: var(--ob-yellow);
+  opacity: 0.95;
+  stroke: var(--ob-purple);
+  stroke-width: 1;
+}
+.onboarding-map-pin .onboarding-map-pin-dot {
+  fill: var(--ob-purple);
+}
+.onboarding-map-pin text {
+  fill: rgba(255, 255, 255, 0.76);
+  font-size: 7.5px;
+  font-weight: 800;
+  text-anchor: middle;
+  letter-spacing: 0.6px;
+  font-family: inherit;
+}
+
+/* Subtle gray variant — used inside the quiz between the
+   option cards and the Continue button. Flat, low-contrast,
+   no labelled pins, very compact. */
+.onboarding-map--subtle {
+  background: rgba(13, 7, 28, 0.18);
+  border-color: rgba(255, 255, 255, 0.13);
+  padding: clamp(4px, 1.6vw, 8px) clamp(10px, 3vw, 14px);
+  box-shadow: none;
+}
+.onboarding-map--subtle .onboarding-map-svg {
+  height: clamp(46px, 13vw, 72px);
+}
+.onboarding-map--subtle .onboarding-map-dot {
+  fill: rgba(255, 255, 255, 0.46);
+  opacity: 0.5;
+}
+.onboarding-map--subtle .onboarding-map-decoration-dot {
+  display: none;
+}
+.onboarding-map--subtle .onboarding-map-pin {
+  display: none;
+}
+
+/* ---------- Primary buttons ---------------------------- */
+.onboarding-btn,
+.onboarding-continue {
+  width: 100%;
+  min-height: 46px;
+  background: var(--ob-yellow);
+  color: #14101F;
+  border: none;
+  border-radius: 999px;
+  padding: clamp(11px, 3vw, 14px) clamp(16px, 4vw, 20px);
+  font-size: clamp(14.5px, 3.9vw, 16px);
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.15s ease, box-shadow 0.18s ease,
+              background 0.18s ease, color 0.18s ease;
+  box-shadow: 0 8px 20px rgba(255, 242, 58, 0.5);
+  letter-spacing: 0.2px;
+}
+.onboarding-btn:hover,
+.onboarding-continue:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+.onboarding-btn:active,
+.onboarding-continue:active:not(:disabled) {
+  transform: translateY(0) scale(0.99);
+}
+.onboarding-continue:disabled {
+  background: rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.46);
+  box-shadow: none;
+  cursor: default;
+  transform: none;
+}
+
+.onboarding-btn--ghost {
+  background: transparent;
+  color: var(--ob-purple);
+  border: 2px solid var(--ob-purple-soft);
+  box-shadow: none;
+}
+.onboarding-btn--ghost:hover {
+  background: var(--ob-purple-soft);
+}
+
+/* ---------- Loading screen ----------------------------- */
+.onboarding-loading {
+  padding: 4px 0 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: onboarding-fade-in 0.35s ease both;
+}
+.onboarding-loading > h3,
+.onboarding-loading > p,
+.onboarding-loading > .onboarding-spinner {
+  align-self: center;
+  text-align: center;
+}
+.onboarding-loading h3 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--ob-purple);
+  margin: 0;
+}
+.onboarding-loading p {
+  color: var(--ob-text-dim);
+  font-size: 14px;
+  margin: 0;
+}
+.onboarding-spinner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 4px solid var(--ob-purple-soft);
+  border-top-color: var(--ob-purple);
+  margin-bottom: 4px;
+  animation: onboarding-spin 0.85s linear infinite;
+}
+@keyframes onboarding-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ---------- Passport Result ---------------------------- */
+.onboarding-passport {
+  background: #fff;
+  border: 1px solid var(--ob-border);
+  border-radius: var(--ob-radius-lg);
+  padding: 22px 20px;
+  position: relative;
+  overflow: hidden;
+  animation: onboarding-card-in 0.45s ease both;
+}
+.onboarding-passport::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg,
+    rgba(91, 10, 122, 0.05) 0%,
+    rgba(255, 242, 58, 0.08) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+}
+.onboarding-passport > * { position: relative; z-index: 1; }
+
+.onboarding-passport-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.onboarding-passport-brand {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--ob-text-dim);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+.onboarding-passport-stamp {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ob-purple);
+  border: 1px dashed var(--ob-purple);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ob-purple-soft);
+}
+
+.onboarding-passport-type {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 4px 0 2px;
+  color: var(--ob-purple);
+  line-height: 1.2;
+}
+.onboarding-passport-sub {
+  font-size: 13px;
+  color: var(--ob-text-dim);
+  margin: 0 0 16px;
+}
+
+.onboarding-passport-section {
+  margin-bottom: 14px;
+}
+.onboarding-passport-section h4 {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ob-purple);
+  margin: 0 0 6px;
+}
+.onboarding-passport-section p,
+.onboarding-passport-section li {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ob-text);
+  margin: 0;
+}
+.onboarding-passport-section ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.onboarding-passport-section li::marker {
+  color: var(--ob-purple);
+}
+
+/* ---------- Action buttons (result page) --------------- */
+.onboarding-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 18px;
+}
+.onboarding-actions .onboarding-btn {
+  padding: 13px 14px;
+  font-size: 13.5px;
+}
+.onboarding-actions .onboarding-btn--full {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Mascot wrapper (currently hidden) ---------- */
+/* The whole mascot stays mounted only when SHOW_PARROT === true.
+   Animations & part-mode CSS remain available for later. */
+.onboarding-mascot-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.onboarding-mascot {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: 50% 80%;
+  will-change: transform;
+}
+.onboarding-mascot img,
+.onboarding-mascot video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  background: transparent;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18));
+}
+.onboarding-bubble {
+  position: relative;
+  margin-top: 10px;
+  background: var(--ob-purple-soft);
+  color: var(--ob-purple-deep);
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1.4;
+  padding: 10px 14px;
+  border-radius: 14px;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(91, 10, 122, 0.08);
+  animation: onboarding-bubble-pop 0.4s ease both;
+}
+.onboarding-bubble::before {
+  content: "";
+  position: absolute;
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 8px solid var(--ob-purple-soft);
+}
+@keyframes onboarding-bubble-pop {
+  from { opacity: 0; transform: translateY(4px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---------- Parrot animation keyframes (UNCHANGED) -----
+   These are preserved as-is so the parrot can be re-enabled
+   later with no animation work. Currently unused because
+   the mascot is hidden via the SHOW_PARROT flag in JSX. */
+
+.onboarding-mascot--idle      { animation: onboarding-idle-float 3.6s ease-in-out infinite; }
+.onboarding-mascot--happy     { animation: onboarding-happy-jump 0.7s cubic-bezier(0.22, 1.4, 0.36, 1) 1; }
+.onboarding-mascot--thinking  { animation: onboarding-thinking-wiggle 1.6s ease-in-out infinite; }
+.onboarding-mascot--loading   { animation: onboarding-loading-flap 0.5s ease-in-out infinite; }
+.onboarding-mascot--celebrate { animation: onboarding-celebrate 1.4s cubic-bezier(0.22, 1.4, 0.36, 1) infinite; }
+
+@keyframes onboarding-idle-float {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%     { transform: translateY(-10px) rotate(2deg); }
+}
+@keyframes onboarding-happy-jump {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(-26px) scale(1.08, 0.95); }
+  60%  { transform: translateY(0) scale(0.97, 1.05); }
+  100% { transform: translateY(0) scale(1); }
+}
+@keyframes onboarding-thinking-wiggle {
+  0%,100% { transform: rotate(-4deg) translateY(0); }
+  50%     { transform: rotate(4deg) translateY(-4px); }
+}
+@keyframes onboarding-loading-flap {
+  0%,100% { transform: translateY(0) scale(1, 1); }
+  25%     { transform: translateY(-6px) scale(1.06, 0.94); }
+  50%     { transform: translateY(-12px) scale(0.94, 1.08); }
+  75%     { transform: translateY(-6px) scale(1.04, 0.96); }
+}
+@keyframes onboarding-celebrate {
+  0%   { transform: translateY(0) rotate(0) scale(1); }
+  25%  { transform: translateY(-22px) rotate(-10deg) scale(1.1); }
+  50%  { transform: translateY(0) rotate(0) scale(1); }
+  75%  { transform: translateY(-14px) rotate(10deg) scale(1.05); }
+  100% { transform: translateY(0) rotate(0) scale(1); }
+}
+
+/* ---------- Parrot parts mode (UNCHANGED, ready later) - */
+.onboarding-parrot-parts { position: relative; width: 100%; height: 100%; }
+.onboarding-parrot-part {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  object-fit: contain; pointer-events: none; user-select: none;
+  will-change: transform;
+}
+.onboarding-parrot-part--body { filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.18)); }
+
+.onboarding-parrot-part--left-wing  { transform-origin: 36% 40%; }
+.onboarding-parrot-part--right-wing { transform-origin: 64% 40%; }
+.onboarding-parrot-part--eyes       { transform-origin: 50% 38%; }
+.onboarding-parrot-part--beak       { transform-origin: 50% 52%; }
+
+.onboarding-mascot[data-mode="parts"] .onboarding-parrot-part--eyes {
+  animation: onboarding-eyes-blink 5s ease-in-out infinite;
+}
+@keyframes onboarding-eyes-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  94%, 96%      { transform: scaleY(0.1); }
+}
+.onboarding-mascot[data-mode="parts"] .onboarding-parrot-part--left-wing {
+  animation: onboarding-wing-sway-left 3.2s ease-in-out infinite;
+}
+.onboarding-mascot[data-mode="parts"] .onboarding-parrot-part--right-wing {
+  animation: onboarding-wing-sway-right 3.2s ease-in-out infinite;
+}
+@keyframes onboarding-wing-sway-left {
+  0%,100% { transform: rotate(0deg); }
+  50%     { transform: rotate(-8deg); }
+}
+@keyframes onboarding-wing-sway-right {
+  0%,100% { transform: rotate(0deg); }
+  50%     { transform: rotate(8deg); }
+}
+.onboarding-mascot[data-mode="parts"].onboarding-mascot--loading {
+  animation: onboarding-loading-bob 0.9s ease-in-out infinite;
+}
+@keyframes onboarding-loading-bob {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+.onboarding-mascot[data-mode="parts"][data-mood="loading"] .onboarding-parrot-part--left-wing  { animation: onboarding-wing-flap-left  0.32s ease-in-out infinite; }
+.onboarding-mascot[data-mode="parts"][data-mood="loading"] .onboarding-parrot-part--right-wing { animation: onboarding-wing-flap-right 0.32s ease-in-out infinite; }
+@keyframes onboarding-wing-flap-left  { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-28deg); } }
+@keyframes onboarding-wing-flap-right { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(28deg);  } }
+.onboarding-mascot[data-mode="parts"][data-mood="loading"] .onboarding-parrot-part--beak {
+  animation: onboarding-beak-chirp 0.45s ease-in-out infinite;
+}
+@keyframes onboarding-beak-chirp {
+  0%,100% { transform: scaleY(1); }
+  50%     { transform: scaleY(0.55) translateY(1.5px); }
+}
+.onboarding-mascot[data-mode="parts"][data-mood="celebrate"] .onboarding-parrot-part--left-wing  { animation: onboarding-wing-celebrate-left  0.7s ease-in-out infinite; }
+.onboarding-mascot[data-mode="parts"][data-mood="celebrate"] .onboarding-parrot-part--right-wing { animation: onboarding-wing-celebrate-right 0.7s ease-in-out infinite; }
+@keyframes onboarding-wing-celebrate-left  { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-40deg); } }
+@keyframes onboarding-wing-celebrate-right { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(40deg);  } }
+.onboarding-mascot[data-mode="parts"][data-mood="thinking"] .onboarding-parrot-part--eyes {
+  animation: onboarding-eyes-glance 1.6s ease-in-out infinite;
+}
+@keyframes onboarding-eyes-glance {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-2px); }
+}
+
+/* ---------- Adaptive sizing across phone frames -------- */
+/* Most sizing is fluid via clamp() above. The breakpoints
+   below only fine-tune edge cases that clamp can't catch:
+   ultra-narrow phones, short landscape, and large desktops. */
+
+/* iPhone SE / older Android (≤360px wide) — tighten gaps */
+@media (max-width: 360px) {
+  .onboarding-card { gap: 12px; }
+  .onboarding-options { gap: 8px; }
+  .onboarding-back { width: 34px; height: 34px; font-size: 18px; }
+}
+
+/* Very narrow (Galaxy Fold closed ≈280px) — last-resort
+   compression. Drop the icon tile if it would crowd text. */
+@media (max-width: 320px) {
+  .onboarding-option { gap: 8px; padding: 8px 10px; min-height: 52px; }
+  .onboarding-option-icon { width: 34px; height: 34px; }
+  .onboarding-icon { width: 22px; height: 22px; }
+  .onboarding-option-title { font-size: 13.5px; }
+  .onboarding-option-desc  { font-size: 11px; }
+  .onboarding-intro h1 { font-size: 21px; }
+  .onboarding-question-bubble h2 { font-size: 14.5px; }
+}
+
+/* Landscape phones (e.g. iPhone in landscape ≤500px tall) —
+   compress vertical rhythm and shrink the NPC so the Continue
+   button stays visible without scrolling. */
+@media (max-height: 560px) and (orientation: landscape) {
+  .onboarding-root { padding-top: 10px; padding-bottom: 10px; }
+  .onboarding-card { gap: 10px; padding: 12px 14px; }
+  .onboarding-intro { padding: 4px 4px 0; gap: 10px; }
+  .onboarding-intro h1 { font-size: 20px; }
+  .onboarding-intro p  { font-size: 13px; }
+  .onboarding-npc-row { margin: 8px 0 10px; }
+  .onboarding-question-bubble { padding: 12px 14px; }
+  .onboarding-question-bubble h2 { font-size: 14px; }
+  .onboarding-map--subtle .onboarding-map-svg { height: 38px; }
+  .onboarding-options { gap: 8px; }
+  .onboarding-option { min-height: 48px; padding: 8px 12px; }
+}
+
+/* Tablet / desktop — slightly more generous padding */
+@media (min-width: 720px) {
+  .onboarding-card { padding: 26px 26px 28px; }
+}
+
+/* Honour reduced-motion preferences (scoped to module) */
+@media (prefers-reduced-motion: reduce) {
+  .onboarding-root *,
+  .onboarding-root *::before,
+  .onboarding-root *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
