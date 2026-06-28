@@ -97,7 +97,7 @@ function SmoothHeroVideo() {
       initial={{ scale: 1.08 }} animate={{ scale: 1 }} transition={{ duration: 1.5, ease: 'easeOut' }}
       style={{ position: 'absolute', inset: 0, background: '#0D071C' }}>
       {[0, 1].map((index) => (
-        <video key={index} ref={videos[index]} autoPlay={index === 0} muted playsInline preload="auto" poster={assetUrl('public.png')} aria-hidden="true"
+        <video key={index} ref={videos[index]} autoPlay={index === 0} muted playsInline preload="auto" aria-hidden="true"
           style={{
             position: 'absolute',
             inset: 0,
